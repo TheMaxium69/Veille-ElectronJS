@@ -2,11 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
 </head>
 <body>
+
+    <nav style="-webkit-app-region: drag">
+        <img src="assets/logo.png" width="20px" style="margin-left: 10px">
+        <p id="title">Veille</p>
+        <div class="nav-buttons">
+            <button id="minimize"><i class="fa-light fa-window-minimize"></i></button>
+            <!--            <button id="maximize"><i class="fa-light fa-square"></i></button>-->
+            <button id="close"><i class="fa-light fa-xmark"></i></button>
+        </div>
+    </nav>
+    <style>
+
+        nav {
+            color: #ededed;
+            border: 1px solid #2c2c2c;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            background: #424242;
+
+            margin: 4px;
+            border-radius: 6px;
+        }
+        nav i {
+            color: #ededed;
+        }
+        #title {
+            user-select: none;
+            font-size: 15px;
+            margin-left: 10px;
+            -webkit-app-region: drag;
+        }
+        :not(nav) {
+            -webkit-app-region: no-drag;
+        }
+        .nav-buttons {
+            margin-left: auto;
+            height: 100%;
+            display: flex;
+        }
+        .nav-buttons > button {
+            transition: background .2s ease;
+            background: #424242;
+            border: none;
+            height: 100%;
+            margin: 0;
+            aspect-ratio: 1;
+            color: #ededed;
+            font-size: 17px;
+        }
+        .nav-buttons > button:hover {
+            transition: .2s ease;
+            background: #2c2c2c;
+            cursor: pointer;
+            border: unset;
+            border-radius: 5px;
+        }
+        .nav-buttons > button:active {
+            background: #4c4c4c;
+            border: unset;
+            border-radius: 5px;
+            outline: unset;
+        }
+
+        .nav-buttons > button:focus {
+            background: #4c4c4c;
+            border: unset;
+            border-radius: 5px;
+            outline: unset;
+        }
+    </style>
 
 
 <p>CC</p>
 
+<button onclick="test()">Vas dans le back end</button>
+<button onclick="create()">Créer un fichier</button>
+<button onclick="cmd()">Cmd</button>
+<button onclick="getApi()">APi</button>
+
 </body>
 </html>
+
+<script>
+
+    const ipc = require('electron').ipcRenderer;
+    const shell = require('electron').shell;
+
+    function test(){
+        ipc.send('test');
+    }
+
+    function create(){
+        ipc.send('create');
+    }
+
+    const { exec } = require('child_process');
+    function cmd(){
+        // shell.openExternal('https://tyrolium.fr');
+
+        // shell.openPath('C:\\Users\\mxmto\\Developpement\\FrameWork-Web\\Veille-ElectronJS\\index.html')
+
+
+        // shell.openExternal('cmd.exe /c ping google.com');
+
+        exec('ping google.com', (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Erreur d'exécution : ${error}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+
+            // Traitez la sortie (stdout) ici
+            // et affichez-la à l'utilisateur dans votre application
+        });
+    }
+
+
+
+    function getApi(){
+
+        let myRequest = new XMLHttpRequest();
+        myRequest.open('GET', 'https://api.chucknorris.io/jokes/random');
+        myRequest.onload = () => {
+
+            var reponse = JSON.parse(myRequest.responseText);
+
+            console.log(reponse.value);
+
+        };
+        myRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        myRequest.send();
+
+    }
+
+
+
+
+</script>

@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require("path");
+const fs = require("fs");
 
 
 let mainWindow;
@@ -8,7 +9,7 @@ let mainWindow;
 function createWindow() {
 
     mainWindow = new BrowserWindow({
-        frame: true, /* BAR NAV */
+        frame: false, /* BAR NAV */
         title: "veille electronjs",
         width: 1318,
         height: 710,
@@ -19,8 +20,9 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, '/module/preload.js'),
             webSecurity: true,
-            nodeIntegration: false,
+            nodeIntegration: true, /* PARLER DANS LE FRONT */
             contextIsolation: false,
+            enableRemoteModule: true,
         }
     });
 
@@ -36,6 +38,7 @@ function createWindow() {
         mainWindow.setTitle('veille electronjs');
     });
 
+
 }
 
 /* AU CHARGEMENT DE L'APP */
@@ -43,6 +46,67 @@ app.whenReady().then(() => {
 
     createWindow();
 
-
+    setActivity('Connectée sur Useritium App', null);
 
 })
+
+/* IPC */
+ipcMain.on("test", (event) => {
+    console.log("Bienvenue dans le back");
+});
+ipcMain.on("hello", (event) => {
+    console.log("hello");
+
+    event.sender.send('messageChannel', "message test");
+});
+
+/* FS */
+ipcMain.on("create", (event) => {
+    console.log("create file");
+
+    let newFile = path.join('C:\\Users\\mxmto\\Desktop\\', "test.txt");
+
+    fs.appendFile(newFile, "test", (err) => {
+        if (err) throw err;
+        console.log("The file has been saved!");
+    })
+
+});
+
+
+// DISCORD
+const clientId = '1228757305558827100';
+const DiscordRPC = require('discord-rpc');
+const RPC = new DiscordRPC.Client({ transport: 'ipc' });
+
+DiscordRPC.register(clientId);
+
+async function setActivity(msg, pseudo){
+    console.log("setActivity");
+    if (!RPC) {
+        console.log("RPC not ready");
+        return
+    };
+
+    RPC.setActivity({
+        details: msg,
+        startTimestamp: Date.now(),
+        largeImageKey: 'useritium',
+        largeImageText: 'Useritium App',
+        smallImageKey: 'tyrolium',
+        smallImageText: 'Tyrolium',
+        instance: false,
+        buttons: [
+            {
+                label: 'Compte Useritium',
+                url: 'https://useritium.fr'
+            },
+            {
+                label: 'Tyrolium',
+                url: 'https://tyrolium.fr'
+            },
+        ]
+    })
+
+}
+RPC.login({ clientId }).catch(err => console.log(err))
