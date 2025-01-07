@@ -1,0 +1,18 @@
+{
+  "name": "veille-electron",
+  "version": "0.1.0-beta",
+  "description": "azeazjeioazj",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "author": "Maxime Tournier",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^29.2.0",
+    "electron-builder": "^22.14.13"
+  },
+  "dependencies": {
+  }
+}
